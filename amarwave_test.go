@@ -75,6 +75,22 @@ func TestNew_WithBaseURL(t *testing.T) {
 	}
 }
 
+func TestNew_WithCluster(t *testing.T) {
+	var received []triggerBody
+	srv := newMockServer(t, http.StatusOK, &received)
+	defer srv.Close()
+
+	// WithBaseURL overrides cluster — just verify WithCluster("local") doesn't panic
+	c := amarwave.New("k", "s",
+		amarwave.WithCluster("local"),
+		amarwave.WithBaseURL(srv.URL), // redirect to test server
+	)
+	err := c.TriggerEvent(context.Background(), "ch", "ev", nil)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+}
+
 func TestNew_WithHTTPClient(t *testing.T) {
 	var received []triggerBody
 	srv := newMockServer(t, http.StatusOK, &received)

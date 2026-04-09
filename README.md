@@ -71,7 +71,7 @@ client := amarwave.New("app_key", "app_secret",
 )
 ```
 
-### Clusters
+<!-- ### Clusters
 
 | Cluster   | Base URL                       |
 |-----------|--------------------------------|
@@ -79,7 +79,7 @@ client := amarwave.New("app_key", "app_secret",
 | `eu`      | `https://api-eu.amarwave.com`  |
 | `us`      | `https://api-us.amarwave.com`  |
 | `ap1`     | `https://api-ap1.amarwave.com` |
-| `ap2`     | `https://api-ap2.amarwave.com` |
+| `ap2`     | `https://api-ap2.amarwave.com` | -->
 
 ---
 

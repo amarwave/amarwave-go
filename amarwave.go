@@ -25,11 +25,12 @@ const (
 
 // clusterBaseURLs maps cluster names to their base API URLs.
 var clusterBaseURLs = map[string]string{
-	"default": "https://api.amarwave.com",
-	"eu":      "https://api-eu.amarwave.com",
-	"us":      "https://api-us.amarwave.com",
-	"ap1":     "https://api-ap1.amarwave.com",
-	"ap2":     "https://api-ap2.amarwave.com",
+	"default": "https://amarwave.com",
+	"local":   "http://localhost:8000",
+	"eu":      "https://amarwave.com",
+	"us":      "https://amarwave.com",
+	"ap1":     "https://amarwave.com",
+	"ap2":     "https://amarwave.com",
 }
 
 // Client is the AmarWave server-side client for triggering events.
@@ -44,8 +45,8 @@ type Client struct {
 type Option func(*Client)
 
 // WithCluster selects a predefined AmarWave cluster.
-// Available clusters: "default", "eu", "us", "ap1", "ap2".
-// Defaults to "default" (https://api.amarwave.com).
+// Available clusters: "default", "local", "eu", "us", "ap1", "ap2".
+// Defaults to "default" (https://amarwave.com).
 func WithCluster(cluster string) Option {
 	return func(c *Client) {
 		if url, ok := clusterBaseURLs[cluster]; ok {

@@ -26,7 +26,7 @@ const (
 // clusterBaseURLs maps cluster names to their base API URLs.
 var clusterBaseURLs = map[string]string{
 	"default": "https://amarwave.com",
-	"local":   "http://localhost:8000",
+	"local":   "https://amarwave.com",
 	"eu":      "https://amarwave.com",
 	"us":      "https://amarwave.com",
 	"ap1":     "https://amarwave.com",

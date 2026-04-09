@@ -54,17 +54,12 @@ client := amarwave.New("app_key", "app_secret")
 
 // Specific cluster
 client := amarwave.New("app_key", "app_secret",
-    amarwave.WithCluster("eu"),   // eu, us, ap1, ap2, local
+    amarwave.WithCluster("eu"),   // eu, us, ap1, ap2
 )
 
-// Self-hosted deployment
+// Self-hosted or local development
 client := amarwave.New("app_key", "app_secret",
-    amarwave.WithBaseURL("https://realtime.yourapp.com"),
-)
-
-// Local development
-client := amarwave.New("app_key", "app_secret",
-    amarwave.WithCluster("local"), // http://localhost:8000
+    amarwave.WithBaseURL("http://localhost:8000"),
 )
 
 // Custom timeout
@@ -86,7 +81,6 @@ client := amarwave.New("app_key", "app_secret",
 | Cluster     | Base URL                        |
 |-------------|---------------------------------|
 | `default`   | `https://api.amarwave.com`      |
-| `local`     | `http://localhost:8000`         |
 | `eu`        | `https://api-eu.amarwave.com`   |
 | `us`        | `https://api-us.amarwave.com`   |
 | `ap1`       | `https://api-ap1.amarwave.com`  |

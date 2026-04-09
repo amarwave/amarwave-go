@@ -26,7 +26,6 @@ const (
 // clusterBaseURLs maps cluster names to their base API URLs.
 var clusterBaseURLs = map[string]string{
 	"default": "https://api.amarwave.com",
-	"local":   "http://localhost:8000",
 	"eu":      "https://api-eu.amarwave.com",
 	"us":      "https://api-us.amarwave.com",
 	"ap1":     "https://api-ap1.amarwave.com",
@@ -45,7 +44,7 @@ type Client struct {
 type Option func(*Client)
 
 // WithCluster selects a predefined AmarWave cluster.
-// Available clusters: "default", "local", "eu", "us", "ap1", "ap2".
+// Available clusters: "default", "eu", "us", "ap1", "ap2".
 // Defaults to "default" (https://api.amarwave.com).
 func WithCluster(cluster string) Option {
 	return func(c *Client) {
@@ -81,21 +80,16 @@ func WithTimeout(d time.Duration) Option {
 
 // New creates a new AmarWave client with the given app credentials.
 // Defaults to the "default" cluster (https://api.amarwave.com).
-// Use WithCluster("local") for a self-hosted server on localhost:8000.
+// Use WithBaseURL for self-hosted or local deployments.
 //
 // Example:
 //
 //	// Hosted
 //	client := amarwave.New("app_key", "app_secret")
 //
-//	// Self-hosted
+//	// Self-hosted / local
 //	client := amarwave.New("app_key", "app_secret",
-//	    amarwave.WithBaseURL("https://realtime.yourapp.com"),
-//	)
-//
-//	// Local development
-//	client := amarwave.New("app_key", "app_secret",
-//	    amarwave.WithCluster("local"),
+//	    amarwave.WithBaseURL("http://localhost:8000"),
 //	)
 func New(appKey, appSecret string, opts ...Option) *Client {
 	c := &Client{

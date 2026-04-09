@@ -80,9 +80,9 @@ func TestNew_WithCluster(t *testing.T) {
 	srv := newMockServer(t, http.StatusOK, &received)
 	defer srv.Close()
 
-	// WithBaseURL overrides cluster — just verify WithCluster("local") doesn't panic
+	// WithBaseURL overrides cluster — verify WithCluster("eu") doesn't panic
 	c := amarwave.New("k", "s",
-		amarwave.WithCluster("local"),
+		amarwave.WithCluster("eu"),
 		amarwave.WithBaseURL(srv.URL), // redirect to test server
 	)
 	err := c.TriggerEvent(context.Background(), "ch", "ev", nil)

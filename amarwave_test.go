@@ -1,4 +1,4 @@
-package amarwave_test
+package amarwave
 
 import (
 	"context"
@@ -9,8 +9,6 @@ import (
 	"strings"
 	"testing"
 	"time"
-
-	amarwave "github.com/amarwave/amarwave-go"
 )
 
 // triggerBody mirrors the JSON payload the SDK sends.
@@ -57,7 +55,7 @@ func newMockServer(t *testing.T, statusCode int, received *[]triggerBody) *httpt
 // ─── New / options ───────────────────────────────────────────────────────────
 
 func TestNew_Defaults(t *testing.T) {
-	c := amarwave.New("key", "secret")
+	c := New("key", "secret")
 	if c == nil {
 		t.Fatal("New() returned nil")
 	}
@@ -68,7 +66,7 @@ func TestNew_WithBaseURL(t *testing.T) {
 	srv := newMockServer(t, http.StatusOK, &received)
 	defer srv.Close()
 
-	c := amarwave.New("k", "s", amarwave.WithBaseURL(srv.URL))
+	c := New("k", "s", withBaseURL(srv.URL))
 	err := c.TriggerEvent(context.Background(), "ch", "ev", nil)
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
@@ -81,9 +79,9 @@ func TestNew_WithCluster(t *testing.T) {
 	defer srv.Close()
 
 	// WithBaseURL overrides cluster — verify WithCluster("eu") doesn't panic
-	c := amarwave.New("k", "s",
-		amarwave.WithCluster("eu"),
-		amarwave.WithBaseURL(srv.URL), // redirect to test server
+	c := New("k", "s",
+		WithCluster("eu"),
+		withBaseURL(srv.URL), // redirect to test server
 	)
 	err := c.TriggerEvent(context.Background(), "ch", "ev", nil)
 	if err != nil {
@@ -97,9 +95,9 @@ func TestNew_WithHTTPClient(t *testing.T) {
 	defer srv.Close()
 
 	custom := &http.Client{Timeout: 5 * time.Second}
-	c := amarwave.New("k", "s",
-		amarwave.WithBaseURL(srv.URL),
-		amarwave.WithHTTPClient(custom),
+	c := New("k", "s",
+		withBaseURL(srv.URL),
+		WithHTTPClient(custom),
 	)
 	err := c.TriggerEvent(context.Background(), "ch", "ev", "data")
 	if err != nil {
@@ -112,9 +110,9 @@ func TestNew_WithTimeout(t *testing.T) {
 	srv := newMockServer(t, http.StatusOK, &received)
 	defer srv.Close()
 
-	c := amarwave.New("k", "s",
-		amarwave.WithBaseURL(srv.URL),
-		amarwave.WithTimeout(3*time.Second),
+	c := New("k", "s",
+		withBaseURL(srv.URL),
+		WithTimeout(3*time.Second),
 	)
 	err := c.TriggerEvent(context.Background(), "ch", "ev", nil)
 	if err != nil {
@@ -219,7 +217,7 @@ func TestTriggerEvent(t *testing.T) {
 			srv := newMockServer(t, tt.serverCode, &received)
 			defer srv.Close()
 
-			c := amarwave.New("test-key", "test-secret", amarwave.WithBaseURL(srv.URL))
+			c := New("test-key", "test-secret", withBaseURL(srv.URL))
 			err := c.TriggerEvent(context.Background(), tt.channel, tt.event, tt.data)
 
 			if tt.wantErr {
@@ -279,7 +277,7 @@ func TestTriggerEvent_ContextCancelled(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.Background(), 50*time.Millisecond)
 	defer cancel()
 
-	c := amarwave.New("k", "s", amarwave.WithBaseURL(srv.URL), amarwave.WithTimeout(5*time.Second))
+	c := New("k", "s", withBaseURL(srv.URL), WithTimeout(5*time.Second))
 	err := c.TriggerEvent(ctx, "ch", "ev", nil)
 	if err == nil {
 		t.Fatal("expected context deadline exceeded error, got nil")
@@ -291,7 +289,7 @@ func TestTriggerEvent_ContextCancelled(t *testing.T) {
 func TestTriggerBatch(t *testing.T) {
 	tests := []struct {
 		name        string
-		events      []amarwave.BatchEvent
+		events      []BatchEvent
 		serverCode  int
 		wantErr     bool
 		wantCount   int
@@ -299,7 +297,7 @@ func TestTriggerBatch(t *testing.T) {
 	}{
 		{
 			name: "two events success",
-			events: []amarwave.BatchEvent{
+			events: []BatchEvent{
 				{Channel: "ch-1", Event: "ev-1", Data: map[string]int{"x": 1}},
 				{Channel: "ch-2", Event: "ev-2", Data: nil},
 			},
@@ -308,13 +306,13 @@ func TestTriggerBatch(t *testing.T) {
 		},
 		{
 			name:       "empty batch is a no-op",
-			events:     []amarwave.BatchEvent{},
+			events:     []BatchEvent{},
 			serverCode: http.StatusOK,
 			wantCount:  0,
 		},
 		{
 			name: "server error stops batch early",
-			events: []amarwave.BatchEvent{
+			events: []BatchEvent{
 				{Channel: "ch-1", Event: "ev-1", Data: nil},
 				{Channel: "ch-2", Event: "ev-2", Data: nil},
 			},
@@ -325,7 +323,7 @@ func TestTriggerBatch(t *testing.T) {
 		},
 		{
 			name: "empty channel in batch",
-			events: []amarwave.BatchEvent{
+			events: []BatchEvent{
 				{Channel: "", Event: "ev", Data: nil},
 			},
 			serverCode:  http.StatusOK,
@@ -335,7 +333,7 @@ func TestTriggerBatch(t *testing.T) {
 		},
 		{
 			name: "empty event in batch",
-			events: []amarwave.BatchEvent{
+			events: []BatchEvent{
 				{Channel: "ch", Event: "", Data: nil},
 			},
 			serverCode:  http.StatusOK,
@@ -351,7 +349,7 @@ func TestTriggerBatch(t *testing.T) {
 			srv := newMockServer(t, tt.serverCode, &received)
 			defer srv.Close()
 
-			c := amarwave.New("k", "s", amarwave.WithBaseURL(srv.URL))
+			c := New("k", "s", withBaseURL(srv.URL))
 			err := c.TriggerBatch(context.Background(), tt.events)
 
 			if tt.wantErr {
@@ -381,13 +379,13 @@ func TestTriggerBatch_PayloadsCorrect(t *testing.T) {
 	srv := newMockServer(t, http.StatusOK, &received)
 	defer srv.Close()
 
-	events := []amarwave.BatchEvent{
+	events := []BatchEvent{
 		{Channel: "alpha", Event: "start", Data: "first"},
 		{Channel: "beta", Event: "stop", Data: 42},
 		{Channel: "gamma", Event: "update", Data: nil},
 	}
 
-	c := amarwave.New("batch-key", "batch-secret", amarwave.WithBaseURL(srv.URL))
+	c := New("batch-key", "batch-secret", withBaseURL(srv.URL))
 	if err := c.TriggerBatch(context.Background(), events); err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}

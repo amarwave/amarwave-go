@@ -54,10 +54,8 @@ func WithCluster(cluster string) Option {
 	}
 }
 
-// WithBaseURL sets a custom API base URL (e.g. "https://api.example.com").
-// Use this for self-hosted AmarWave deployments.
-// The URL should not have a trailing slash.
-func WithBaseURL(url string) Option {
+// withBaseURL is an internal option used in tests to redirect requests.
+func withBaseURL(url string) Option {
 	return func(c *Client) {
 		c.baseURL = url
 	}
@@ -80,16 +78,14 @@ func WithTimeout(d time.Duration) Option {
 
 // New creates a new AmarWave client with the given app credentials.
 // Defaults to the "default" cluster (https://api.amarwave.com).
-// Use WithBaseURL for self-hosted or local deployments.
 //
 // Example:
 //
-//	// Hosted
 //	client := amarwave.New("app_key", "app_secret")
 //
-//	// Self-hosted / local
 //	client := amarwave.New("app_key", "app_secret",
-//	    amarwave.WithBaseURL("http://localhost:8000"),
+//	    amarwave.WithCluster("eu"),
+//	    amarwave.WithTimeout(5*time.Second),
 //	)
 func New(appKey, appSecret string, opts ...Option) *Client {
 	c := &Client{

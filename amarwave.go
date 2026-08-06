@@ -26,7 +26,7 @@ const (
 // clusterBaseURLs maps cluster names to their base API URLs.
 var clusterBaseURLs = map[string]string{
 	"default": "https://amarwave.com",
-	"local":   "https://amarwave.com",
+	"local":   "http://localhost:8000",
 	"eu":      "https://amarwave.com",
 	"us":      "https://amarwave.com",
 	"ap1":     "https://amarwave.com",
@@ -108,7 +108,7 @@ type triggerPayload struct {
 	AppKey    string `json:"app_key"`
 	AppSecret string `json:"app_secret"`
 	Channel   string `json:"channel"`
-	Event     string `json:"event"`
+	Event     string `json:"name"`
 	Data      any    `json:"data"`
 }
 

@@ -16,7 +16,7 @@ type triggerBody struct {
 	AppKey    string      `json:"app_key"`
 	AppSecret string      `json:"app_secret"`
 	Channel   string      `json:"channel"`
-	Event     string      `json:"event"`
+	Event     string      `json:"name"`
 	Data      interface{} `json:"data"`
 }
 
